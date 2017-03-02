@@ -16,9 +16,9 @@ function galleryService($q, $log, $http, authService) {
       let url = `${__API_URL__}/api/gallery`;
       let config = {
         headers: {
-          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
           'Accept': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         }
       };
       return $http.post(url, gallery, config);
@@ -44,8 +44,8 @@ function galleryService($q, $log, $http, authService) {
       let url = `${__API_URL__}/api/gallery`;
       let config = {
         headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json'
         }
       };
       return $http.get(url, config);
@@ -69,15 +69,24 @@ function galleryService($q, $log, $http, authService) {
       let url = `${__API_URL__}/api/gallery/${id}`;
       let config = {
         headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json'
         }
       };
       return $http.delete(url, config);
     })
     .then(() => {
       $log.log('gallery deleted');
-      service.fetchGalleries();
+
+      for(let i = 0; i < service.galleries.length; i++) {
+        let curr = service.galleries[i];
+
+        if(curr._id === id) {
+          service.galleries.splice(i, 1);
+          break;
+        }
+      }
+
     })
     .catch(err => {
       $log.error(err.message);
@@ -93,17 +102,25 @@ function galleryService($q, $log, $http, authService) {
       let url = `${__API_URL__}/api/gallery/${gallery._id}`;
       let config = {
         headers: {
-          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
           'Accept': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         }
       };
 
       return $http.put(url, gallery, config);
     })
-    .then(() => {
+    .then(res => {
       $log.log('gallery updated');
-      service.fetchGalleries();
+
+      for(let i = 0; i < service.galleries.length; i++) {
+        let curr = service.galleries[i];
+
+        if(curr._id === gallery._id) {
+          service.galleries[i] = res.data;
+          break;
+        }
+      }
     })
     .catch(err => {
       $log.error(err.message);

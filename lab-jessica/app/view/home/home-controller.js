@@ -17,22 +17,6 @@ function HomeController($log, $rootScope, galleryService) {
     });
   };
 
-  this.deleteGallery = function(id) {
-    galleryService.deleteGallery(id)
-    .then(() => {
-      this.fetchGalleries();
-    });
-  };
-
-  this.updateGallery = function(gallery) {
-    $log.log('updateGallery', gallery);
-    galleryService.updateGallery(gallery)
-    .then(() => {
-      this.fetchGalleries();
-      this.hideEditForm = true;
-    });
-  };
-
   this.fetchGalleries();
 
   // $rootScope.$on('$locationChangeSuccess', () => {
